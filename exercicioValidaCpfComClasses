@@ -1,0 +1,53 @@
+class ValidaCpf{
+    constructor(cpf){
+        this.cpf = cpf;
+    Object.defineProperty(this, 'cpfLimpo', {
+        enumerable: true,
+        value: cpf.replace(/\D+/g, '')
+        })
+    
+
+    }
+
+    valida(){
+        if(typeof this.cpfLimpo === 'undefined') return false;
+        if(this.cpfLimpo.length !== 11) return false;
+        if(this.isSequencia()) return;
+
+        const cpfParcial = this.cpfLimpo.slice(0, -2);
+        const digito1 = ValidaCpf.criaDigito(cpfParcial);
+        const digito2 = ValidaCpf.criaDigito(cpfParcial + digito1);
+        const novoCpf = cpfParcial + digito1 + digito2;
+        console.log(novoCpf);
+
+        return novoCpf === this.cpfLimpo
+        
+    }
+    isSequencia(){
+        const sequencia = this.cpfLimpo[0].repeat(this.cpfLimpo.length);
+        if(sequencia === this.cpfLimpo) return;
+    }
+
+    static criaDigito(cpfParcial){
+        const cpfArray = Array.from(cpfParcial);
+        let regressivo = cpfArray.length + 1;
+        const total = cpfArray.reduce((acumulador, valor) => {
+            acumulador += (regressivo * Number(valor));
+            regressivo--
+            return acumulador;
+        }, 0);
+        const digito1 = 11 - (total % 11);
+        return digito1 > 9 ? '0' : String(digito1);
+    }
+
+
+
+}
+const cpf = new ValidaCpf('070.987.720-03')
+
+if (cpf.valida()){
+    console.log('Cpf válido!')
+} else{
+    console.log('Cpf inválido')
+};
+
